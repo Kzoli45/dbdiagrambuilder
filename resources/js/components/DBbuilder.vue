@@ -2,9 +2,9 @@
     import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
     import DBTable from './DBTable.vue';
     import Editor from '@/components/Editor.vue';
-    import { Parser } from '@dbml/core'
+    import { Parser } from '@dbml/core';
     import { ref, watch } from 'vue';
-    import { debounce } from 'lodash-es'
+    import { debounce } from 'lodash-es';
 
     const parser = new Parser();
 
