@@ -1,40 +1,53 @@
 <script setup lang="ts">
-    import MonacoEditor from 'monaco-editor-vue3';
+    import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
+    import * as monaco from 'monaco-editor'
+    import { registerDbmlLanguage } from '@/composables/useDBML'
 
-    console.log('MonacoEditor:', MonacoEditor);
+    const props = defineProps<{
+        value: string
+    }>()
 
-    defineProps({
-        value: {
-            type: String,
-            required: true
-        }
-    });
+    const emit = defineEmits<{
+        (e: 'update:value', value: string): void
+    }>()
 
-    const options = {
-        colorDecorators: true,
-        lineHeight: 24,
-        tabSize: 2,
-        fontSize: 14,
-        minimap: {
-            enabled:false
-        },
-        automaticLayout: true,
-        wordWrap: 'on',
-        wrappingIndent: 'indent',
-        scrollbar: {
-            verticalScrollbarSize: 10,
-            horizontalScrollbarSize: 8,
-            alwaysConsumeMouseWheel: false
-        },
-    }
+    const editorContainer = ref<HTMLDivElement | null>(null)
+    let editor: monaco.editor.IStandaloneCodeEditor
+
+    onMounted(() => {
+        if (!editorContainer.value) return
+
+        registerDbmlLanguage(monaco)
+
+        editor = monaco.editor.create(editorContainer.value, {
+            value: props.value,
+            language: 'dbml',
+            theme: 'dbmlTheme',
+            automaticLayout: true,
+            fontSize: 14,
+            minimap: { enabled: false },
+            wordWrap: 'on',
+        })
+
+        editor.onDidChangeModelContent(() => {
+            emit('update:value', editor.getValue())
+            })
+        })
+
+        watch(
+            () => props.value,
+            (newVal) => {
+                if (editor && editor.getValue() !== newVal) {
+                editor.setValue(newVal)
+                }
+            }
+        )
+
+        onBeforeUnmount(() => {
+            editor?.dispose()
+    })
 </script>
 
 <template>
-  <MonacoEditor
-    theme="vs-dark"
-    :options="options"
-    language="dbml"
-    :value="value"
-    @update:value="$emit('update:value', $event)"
-  ></MonacoEditor>
+  <div ref="editorContainer" class="h-full"></div>
 </template>

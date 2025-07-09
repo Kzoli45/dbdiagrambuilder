@@ -37,7 +37,7 @@
             const parsed = parser.parse(content, 'dbml');
             currentDB.value.tables = parsed.schemas[0].tables.map((table: any, i: number) => ({
               ...table,
-              position: { x: 100 + i * 50, y: 100 + i * 50 },
+              position: { x: 100 + i * 100, y: 100 + i * 100 },
             }));
             console.log('Parsed DBML:', currentDB.value.tables);
 

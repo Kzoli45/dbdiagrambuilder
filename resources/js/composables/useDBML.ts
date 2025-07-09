@@ -1,6 +1,4 @@
-import * as monaco from 'monaco-editor'
-
-export function registerDbmlLanguage() {
+export function registerDbmlLanguage(monaco: typeof import('monaco-editor')) {
   monaco.languages.register({ id: 'dbml' });
 
   monaco.languages.setMonarchTokensProvider('dbml', {
