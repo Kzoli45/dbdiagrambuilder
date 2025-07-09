@@ -1,6 +1,8 @@
 <script setup lang="ts">
     import MonacoEditor from 'monaco-editor-vue3';
 
+    console.log('MonacoEditor:', MonacoEditor);
+
     defineProps({
         value: {
             type: String,

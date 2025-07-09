@@ -18,6 +18,10 @@
                 type_name: string;
             };
         }>;
+        position?: {
+            x: number;
+            y: number;
+        };
     };
     
     const currentDB = ref<{
@@ -31,7 +35,10 @@
     const debouncedParse = debounce((content: string) => {
         try {
             const parsed = parser.parse(content, 'dbml');
-            currentDB.value.tables = parsed.schemas[0].tables;
+            currentDB.value.tables = parsed.schemas[0].tables.map((table: any, i: number) => ({
+              ...table,
+              position: { x: 100 + i * 50, y: 100 + i * 50 },
+            }));
             console.log('Parsed DBML:', currentDB.value.tables);
 
         } catch (error) {
@@ -42,7 +49,6 @@
     watch(editorContent, (newValue) => {
         debouncedParse(newValue);
     });
-
 </script>
 
 <template>
@@ -52,12 +58,14 @@
         <Editor v-model:value="editorContent" />
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel class="bg-zinc-800 flex justify-center items-center">
+      <ResizablePanel class="bg-zinc-800 relative overflow-hidden">
         <DBTable
           v-for="(table) in currentDB.tables"
           :key="table.id"
           :head="table.name"
-          :fields="table.fields.map(field => ({ ...field, type: { type_name: field.type.type_name } }))"
+          :fields="table.fields"
+          :position="table.position || { x: 0, y: 0 }"
+          @update:position="pos => table.position = pos"
         />
       </ResizablePanel>
     </ResizablePanelGroup>
