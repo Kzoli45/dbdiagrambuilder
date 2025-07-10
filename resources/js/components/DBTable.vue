@@ -6,11 +6,16 @@
         CollapsibleContent,
         CollapsibleTrigger,
     } from '@/components/ui/collapsible'
-    import { Minimize2 } from 'lucide-vue-next'
+    import {
+        HoverCard,
+        HoverCardContent,
+        HoverCardTrigger,
+    } from '@/components/ui/hover-card'
+    import { Minimize2, KeyRound, ScrollText } from 'lucide-vue-next'
     
     const props = defineProps<{
         head: string,
-        fields: Array<{ id: string | number; name: string; type: { type_name: string } }>
+        fields: Array<{ id: string | number; name: string; type: { type_name: string }; pk: boolean | undefined; note: string | null }>,
         position: { x: number; y: number }
     }>()
 
@@ -61,7 +66,20 @@
                 <CollapsibleContent>
                     <div class="bg-zinc-700 py-1 px-2 flex flex-col gap-2 text-sm">
                         <div class="flex justify-between gap-2" v-for="(field) in fields" :key="field.id">
-                            <span>{{ field.name }}</span>
+                            <div class="flex items-center gap-1">
+                                <span>{{ field.name }}</span>
+                                <KeyRound v-if="field.pk" class="h-4 w-4" />
+                                <HoverCard v-if="field.note" :open-delay="0">
+                                    <HoverCardTrigger>
+                                        <ScrollText class="h-4 w-4" />
+                                    </HoverCardTrigger>
+                                    <HoverCardContent class="bg-zinc-900 p-2 rounded">
+                                        <div class="text-xs text-gray-300">
+                                            {{ field.note }}
+                                        </div>
+                                    </HoverCardContent>
+                                </HoverCard>
+                            </div>
                             <span>{{ field.type.type_name }}</span>
                         </div>
                     </div>
